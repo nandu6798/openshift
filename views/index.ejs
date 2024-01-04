@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Upload</title>
+</head>
+
+<body>
+  <h1>File Upload</h1>
+
+  <% if (successMessage) { %>
+    <p style="color: green;"><%= successMessage %></p>
+  <% } %>
+
+  <!-- File Upload Form with Client-side Validation -->
+  <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" id="fileInput" required>
+    <span id="fileSizeError" style="color: red;"></span>
+    <button type="button" onclick="validateAndSubmit()">Upload File</button>
+  </form>
+
+  <% if (errorMessage) { %>
+    <p style="color: red;"><%= errorMessage %></p>
+  <% } %>
+
+  <h2>Uploaded Files</h2>
+
+  <!-- List of Uploaded Files -->
+  <ul id="navbar">
+    <% files.forEach(function(file) { %>
+      <li><a href="/uploads/<%= file %>"><%= file %></a></li>
+    <% }); %>
+  </ul>
+
+  <script>
+    function validateAndSubmit() {
+      var fileInput = document.getElementById('fileInput');
+      var fileSizeError = document.getElementById('fileSizeError');
+	    console.log('fileinput', fileInput);
+	    const fileName = document.getElementById('fileInput').files[0].name;
+	    const files = Array.from(document.getElementById("navbar").getElementsByTagName("li"));
+
+    if (files.map(file => file.textContent).includes(fileName)) {
+      fileSizeError.textContent = 'File already uploaded';
+      return;
+    }
+
+      if (fileInput.files.length > 0) {
+        var fileSize = fileInput.files[0].size; // in bytes
+        var maxSize = 5 * 1024 * 1024; // 5MB limit
+
+        if (fileSize > maxSize) {
+          fileSizeError.textContent = 'File size exceeds the limit (5MB).';
+          return;
+        }
+      }
+
+      // If validation passes, submit the form
+      document.getElementById('uploadForm').submit();
+    }
+  </script>
+</body>
+
+</html>
